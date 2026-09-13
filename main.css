@@ -1,24 +1,44 @@
 /* ==========================================
    Primary Stylesheet — tjmiranda.com
    Author: TJ Miranda
+   Theme: dark, with gold and red accents
    ========================================== */
 
 /* --- Design Tokens --- */
 :root {
-  --blue: #007bff;
+  color-scheme: dark;
+
+  /* Buttons: blue, red on hover.
+     For gold buttons, set --btn: #d4af37 and --btn-text: #111111 */
+  --btn: #007bff;
+  --btn-text: #ffffff;
+  --btn-hover: #ff0000;
+  --btn-hover-text: #ffffff;
+
+  --gold: #d4af37;
+  --gold-light: #f1d27a;
+  --gold-soft: rgba(212, 175, 55, 0.12);
+  --gold-line: rgba(212, 175, 55, 0.28);
+  --gold-glow: rgba(212, 175, 55, 0.22);
   --red: #ff0000;
-  --ink: #111827;
-  --text: #374151;
-  --muted: #6b7280;
-  --line: #e5e7eb;
-  --bg: #f5f7fa;
-  --surface: #ffffff;
-  --dark: #1c1c1c;
-  --dark-2: #2a2a2a;
+  --red-glow: rgba(255, 0, 0, 0.16);
+
+  --ink: #f5f5f4;
+  --text: #cfcfd3;
+  --muted: #9c9ca4;
+  --line: #2a2a2d;
+
+  --bg: #0d0d0e;
+  --bg-alt: #141415;
+  --surface: #19191b;
+  --field: #101011;
+  --header-bg: #111112;
+  --panel-bg: #141415;
+
   --radius: 14px;
   --radius-sm: 8px;
-  --shadow: 0 1px 2px rgba(17, 24, 39, 0.06), 0 8px 24px rgba(17, 24, 39, 0.06);
-  --shadow-lg: 0 20px 48px rgba(17, 24, 39, 0.14);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.6);
   --header-h: 72px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
@@ -33,6 +53,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-h) + 16px);
+  background-color: var(--bg);
 }
 
 body {
@@ -52,6 +73,11 @@ body.menu-open {
   overflow: hidden;
 }
 
+::selection {
+  background: var(--gold);
+  color: #111;
+}
+
 main {
   flex: 1; /* Pushes footer to the bottom */
 }
@@ -65,6 +91,10 @@ video {
 a {
   text-decoration: none;
   color: inherit;
+}
+
+strong {
+  color: var(--ink);
 }
 
 h1,
@@ -102,7 +132,7 @@ ol {
 }
 
 :focus-visible {
-  outline: 3px solid var(--blue);
+  outline: 3px solid var(--gold);
   outline-offset: 3px;
 }
 
@@ -124,8 +154,8 @@ ol {
   top: -60px;
   z-index: 2000;
   padding: 10px 16px;
-  background: var(--blue);
-  color: #fff;
+  background: var(--gold);
+  color: #111;
   border-radius: var(--radius-sm);
   font-weight: 700;
 }
@@ -152,8 +182,9 @@ ol {
   padding-block: 80px;
 }
 
-.section--white {
-  background-color: var(--surface);
+.section--alt {
+  background-color: var(--bg-alt);
+  border-block: 1px solid #1d1d20;
 }
 
 .section--tight {
@@ -174,7 +205,7 @@ ol {
 .eyebrow {
   display: inline-block;
   margin-bottom: 10px;
-  color: var(--blue);
+  color: var(--gold);
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -204,7 +235,7 @@ ol {
 }
 
 /* ==========================================
-   Buttons (Blue, Red on Hover)
+   Buttons
    ========================================== */
 .btn,
 .submit-btn {
@@ -214,23 +245,23 @@ ol {
   gap: 8px;
   min-width: 150px;
   padding: 12px 26px;
-  background-color: #007bff;
+  background-color: var(--btn);
   border: none;
   border-radius: 4px;
-  color: #ffffff;
+  color: var(--btn-text);
   font-family: inherit;
   font-size: 1rem;
   font-weight: bold;
   line-height: 1.2;
   text-align: center;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
 }
 
 .btn:hover,
 .submit-btn:hover {
-  background-color: #ff0000;
-  color: #ffffff;
+  background-color: var(--btn-hover);
+  color: var(--btn-hover-text);
 }
 
 .btn:active,
@@ -244,7 +275,7 @@ ol {
 }
 
 .text-link {
-  color: var(--blue);
+  color: var(--gold);
   font-weight: 700;
   transition: color 0.2s;
 }
@@ -260,8 +291,9 @@ ol {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: var(--dark);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: var(--header-bg);
+  border-bottom: 1px solid var(--gold-line);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 .navbar {
@@ -322,10 +354,10 @@ ol {
   height: 46px;
   padding: 13px 11px;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid var(--gold-line);
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: border-color 0.3s ease;
 }
 
 .hamburger:hover {
@@ -358,7 +390,7 @@ ol {
   position: fixed;
   inset: 0;
   z-index: 1;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.7);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -375,8 +407,11 @@ ol {
   height: 100vh;
   height: 100dvh;
   padding: calc(var(--header-h) + 16px) 28px 32px;
-  background-color: var(--dark-2);
-  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.4);
+  background:
+    radial-gradient(circle at 100% 100%, var(--gold-glow), transparent 55%),
+    var(--panel-bg);
+  border-left: 1px solid var(--gold-line);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.6);
   transform: translateX(100%);
   visibility: hidden;
   transition: transform 0.35s ease, visibility 0.35s ease;
@@ -395,7 +430,7 @@ ol {
 
 .menu-label {
   margin: 0 0 8px;
-  color: #9ca3af;
+  color: var(--gold);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -409,7 +444,7 @@ ol {
 }
 
 .nav-menu li {
-  border-bottom: 1px solid #3d3d3d;
+  border-bottom: 1px solid var(--line);
 }
 
 .nav-link {
@@ -432,12 +467,12 @@ ol {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.nav-link:hover,
 .nav-link[aria-current="page"] {
-  color: #ff0000;
+  color: var(--gold);
 }
 
 .nav-link:hover {
+  color: #ff0000;
   padding-left: 10px;
 }
 
@@ -456,7 +491,7 @@ ol {
    ========================================== */
 .carousel {
   position: relative;
-  background-color: #0b0b0b;
+  background-color: #000;
   color: #fff;
   --carousel-interval: 6000ms;
 }
@@ -491,7 +526,7 @@ ol {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.55) 45%, rgba(0, 0, 0, 0.1) 100%);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.6) 45%, rgba(0, 0, 0, 0.1) 100%);
 }
 
 .carousel-content {
@@ -509,10 +544,6 @@ ol {
   max-width: 600px;
 }
 
-.carousel-content .eyebrow {
-  color: #6fb3ff;
-}
-
 .carousel-content h1,
 .carousel-content h2 {
   color: #fff;
@@ -521,7 +552,7 @@ ol {
 }
 
 .carousel-content p {
-  color: #e5e7eb;
+  color: #e5e5e5;
   font-size: clamp(1rem, 1.6vw, 1.2rem);
   margin-bottom: 28px;
 }
@@ -552,7 +583,7 @@ ol {
   height: 6px;
   padding: 0;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.3);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -560,7 +591,7 @@ ol {
 }
 
 .carousel-dot:hover {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.55);
 }
 
 .carousel-dot[aria-current="true"] {
@@ -571,7 +602,7 @@ ol {
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--blue);
+  background: var(--gold);
   transform-origin: left;
   animation: carousel-progress var(--carousel-interval) linear forwards;
 }
@@ -597,8 +628,8 @@ ol {
   height: 44px;
   padding: 0;
   color: #fff;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--gold-line);
   border-radius: 50%;
   cursor: pointer;
   transition: background-color 0.2s ease, border-color 0.2s ease;
@@ -631,11 +662,12 @@ ol {
    ========================================== */
 .page-hero {
   padding-block: 72px 64px;
-  color: #e5e7eb;
+  color: var(--text);
+  border-bottom: 1px solid var(--line);
   background:
-    radial-gradient(circle at 85% 20%, rgba(0, 123, 255, 0.35), transparent 45%),
-    radial-gradient(circle at 10% 90%, rgba(255, 0, 0, 0.18), transparent 40%),
-    #141414;
+    radial-gradient(circle at 85% 15%, var(--gold-glow), transparent 45%),
+    radial-gradient(circle at 8% 100%, var(--red-glow), transparent 40%),
+    #0a0a0a;
 }
 
 .page-hero h1 {
@@ -643,21 +675,17 @@ ol {
   margin-bottom: 12px;
 }
 
-.page-hero .eyebrow {
-  color: #6fb3ff;
-}
-
 .page-hero p {
   max-width: 680px;
   margin: 0;
   font-size: 1.125rem;
-  color: #d1d5db;
+  color: #d4d4d8;
 }
 
 .page-hero .meta {
   margin-top: 16px;
   font-size: 0.9rem;
-  color: #9ca3af;
+  color: var(--muted);
 }
 
 /* ==========================================
@@ -679,7 +707,7 @@ a.card:hover,
 .card--hover:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
-  border-color: #cfe3ff;
+  border-color: var(--gold-line);
 }
 
 .card h3 {
@@ -700,8 +728,9 @@ a.card:hover,
   width: 52px;
   height: 52px;
   margin-bottom: 18px;
-  color: var(--blue);
-  background: #e8f2ff;
+  color: var(--gold);
+  background: var(--gold-soft);
+  border: 1px solid var(--gold-line);
   border-radius: 12px;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
@@ -713,8 +742,8 @@ a.card:hover,
 
 .card--hover:hover .icon-badge,
 a.card:hover .icon-badge {
-  color: #fff;
-  background: var(--blue);
+  color: #111;
+  background: var(--gold);
 }
 
 /* --- Intro / Split --- */
@@ -732,11 +761,12 @@ a.card:hover .icon-badge {
   align-items: flex-end;
   min-height: 420px;
   overflow: hidden;
+  border: 1px solid var(--gold-line);
   border-radius: 24px;
   background:
-    radial-gradient(circle at 70% 30%, rgba(0, 123, 255, 0.55), transparent 55%),
-    radial-gradient(circle at 20% 80%, rgba(255, 0, 0, 0.35), transparent 50%),
-    #161616;
+    radial-gradient(circle at 70% 25%, rgba(212, 175, 55, 0.4), transparent 55%),
+    radial-gradient(circle at 15% 85%, rgba(255, 0, 0, 0.3), transparent 50%),
+    #0f0f10;
 }
 
 .portrait img {
@@ -756,6 +786,7 @@ a.card:hover .icon-badge {
   padding: 16px;
   background: var(--surface);
   border: 1px solid var(--line);
+  border-top: 2px solid var(--gold);
   border-radius: var(--radius-sm);
 }
 
@@ -796,19 +827,20 @@ a.card:hover .icon-badge {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: var(--blue) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / 10px no-repeat;
+  background: var(--gold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111111' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / 10px no-repeat;
 }
 
 /* --- CTA Band --- */
 .cta-band {
   padding: 48px;
-  color: #d1d5db;
+  color: var(--text);
   text-align: center;
+  border: 1px solid var(--gold-line);
   border-radius: 24px;
   background:
-    radial-gradient(circle at 100% 0%, rgba(0, 123, 255, 0.45), transparent 50%),
-    radial-gradient(circle at 0% 100%, rgba(255, 0, 0, 0.25), transparent 45%),
-    #151515;
+    radial-gradient(circle at 100% 0%, var(--gold-glow), transparent 50%),
+    radial-gradient(circle at 0% 100%, var(--red-glow), transparent 45%),
+    #111112;
 }
 
 .cta-band h2 {
@@ -833,7 +865,6 @@ a.card:hover .icon-badge {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  scroll-margin-top: calc(var(--header-h) + 20px);
 }
 
 .service-card .icon-badge {
@@ -857,8 +888,8 @@ a.card:hover .icon-badge {
   margin-bottom: 20px;
   font-size: 0.9rem;
   color: var(--muted);
-  background: var(--bg);
-  border-left: 3px solid var(--blue);
+  background: var(--field);
+  border-left: 3px solid var(--gold);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
@@ -874,7 +905,7 @@ a.card:hover .icon-badge {
   content: counter(step, decimal-leading-zero);
   display: block;
   margin-bottom: 12px;
-  color: var(--blue);
+  color: var(--gold);
   font-size: 2rem;
   font-weight: 800;
   line-height: 1;
@@ -885,6 +916,7 @@ a.card:hover .icon-badge {
   padding: 40px;
   background: var(--surface);
   border: 1px solid var(--line);
+  border-top: 3px solid var(--gold);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
@@ -924,20 +956,25 @@ a.card:hover .icon-badge {
   width: 100%;
   padding: 12px 14px;
   color: var(--ink);
-  background: #fbfcfd;
-  border: 1px solid #d1d5db;
+  background: var(--field);
+  border: 1px solid #36363a;
   border-radius: var(--radius-sm);
   font-family: inherit;
   font-size: 0.95rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #6f6f77;
+}
+
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--blue);
-  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.15);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.18);
 }
 
 .form-hint {
@@ -978,11 +1015,11 @@ a.card:hover .icon-badge {
   width: 18px;
   height: 18px;
   margin-top: 3px;
-  accent-color: var(--blue);
+  accent-color: var(--gold);
 }
 
 .form-check a {
-  color: var(--blue);
+  color: var(--gold);
   font-weight: 600;
 }
 
@@ -1017,7 +1054,7 @@ a.card:hover .icon-badge {
 }
 
 .faq-item[open] {
-  border-color: #cfe3ff;
+  border-color: var(--gold-line);
   box-shadow: var(--shadow);
 }
 
@@ -1043,23 +1080,23 @@ a.card:hover .icon-badge {
   place-items: center;
   width: 26px;
   height: 26px;
-  color: var(--blue);
+  color: var(--gold);
   font-size: 1.2rem;
   line-height: 1;
-  background: #e8f2ff;
+  background: var(--gold-soft);
   border-radius: 50%;
   transform: translateY(-50%);
   transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
 }
 
 .faq-item[open] summary::after {
-  color: #fff;
-  background: var(--blue);
+  color: #111;
+  background: var(--gold);
   transform: translateY(-50%) rotate(45deg);
 }
 
 .faq-item summary:hover {
-  color: var(--blue);
+  color: var(--gold);
 }
 
 .faq-answer {
@@ -1073,7 +1110,7 @@ a.card:hover .icon-badge {
 }
 
 .faq-answer a {
-  color: var(--blue);
+  color: var(--gold);
   font-weight: 600;
 }
 
@@ -1092,12 +1129,12 @@ a.card:hover .icon-badge {
   margin-top: 48px;
   padding-top: 8px;
   font-size: 1.45rem;
-  scroll-margin-top: calc(var(--header-h) + 16px);
 }
 
 .prose h3 {
   margin-top: 28px;
   font-size: 1.1rem;
+  color: var(--gold-light);
 }
 
 .prose li {
@@ -1105,7 +1142,7 @@ a.card:hover .icon-badge {
 }
 
 .prose a {
-  color: var(--blue);
+  color: var(--gold);
   font-weight: 600;
 }
 
@@ -1116,9 +1153,9 @@ a.card:hover .icon-badge {
 .prose .callout {
   padding: 18px 20px;
   margin: 24px 0;
-  background: #fff;
+  background: var(--surface);
   border: 1px solid var(--line);
-  border-left: 4px solid var(--blue);
+  border-left: 4px solid var(--gold);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
@@ -1142,6 +1179,7 @@ a.card:hover .icon-badge {
   margin: 0 0 12px;
   padding: 0;
   font-size: 1rem;
+  color: var(--gold);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -1182,8 +1220,8 @@ a.card:hover .icon-badge {
 }
 
 .table-scroll th {
-  color: var(--ink);
-  background: #f3f4f6;
+  color: var(--gold-light);
+  background: #212124;
 }
 
 .table-scroll tr:last-child td {
@@ -1200,7 +1238,6 @@ a.card:hover .icon-badge {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  scroll-margin-top: calc(var(--header-h) + 20px);
 }
 
 .content-card > h2 {
@@ -1210,10 +1247,10 @@ a.card:hover .icon-badge {
 .content-card > h2::after {
   content: "";
   display: block;
-  width: 48px;
+  width: 56px;
   height: 3px;
   margin-top: 10px;
-  background: var(--blue);
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold) 60%, var(--red) 100%);
   border-radius: 3px;
 }
 
@@ -1221,8 +1258,9 @@ a.card:hover .icon-badge {
   float: right;
   width: 180px;
   margin: 0 0 16px 24px;
+  border: 1px solid var(--gold-line);
   border-radius: 16px;
-  background: linear-gradient(160deg, #1f3b63, #161616);
+  background: linear-gradient(160deg, #3a2e0c, #0f0f10 70%);
 }
 
 .clearfix::after {
@@ -1242,15 +1280,17 @@ a.card:hover .icon-badge {
 
 .pill-list li {
   padding: 6px 14px;
-  color: #0b4a8f;
+  color: var(--gold-light);
   font-size: 0.9rem;
   font-weight: 600;
-  background: #e8f2ff;
+  background: var(--gold-soft);
+  border: 1px solid var(--gold-line);
   border-radius: 999px;
 }
 
 .video-frame {
   overflow: hidden;
+  border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   background: #000;
 }
@@ -1271,7 +1311,6 @@ a.card:hover .icon-badge {
   counter-increment: fact;
   position: relative;
   padding: 0 0 12px 60px;
-  scroll-margin-top: calc(var(--header-h) + 20px);
 }
 
 .fun-facts > li::before {
@@ -1283,9 +1322,9 @@ a.card:hover .icon-badge {
   place-items: center;
   width: 40px;
   height: 40px;
-  color: #fff;
+  color: #111;
   font-weight: 800;
-  background: var(--blue);
+  background: var(--gold);
   border-radius: 50%;
 }
 
@@ -1297,7 +1336,8 @@ a.card:hover .icon-badge {
   line-height: 40px;
 }
 
-.fun-facts > li > a:hover {
+.fun-facts > li > a:hover,
+.fun-facts > li > a:hover strong {
   color: var(--red);
 }
 
@@ -1318,10 +1358,10 @@ a.card:hover .icon-badge {
   top: 6px;
   width: 12px;
   height: 12px;
-  background: var(--blue);
-  border: 2px solid #fff;
+  background: var(--gold);
+  border: 2px solid var(--surface);
   border-radius: 50%;
-  box-shadow: 0 0 0 2px var(--blue);
+  box-shadow: 0 0 0 2px var(--gold);
 }
 
 .resume-entry h3 {
@@ -1350,6 +1390,7 @@ footer {
   padding: 2.5rem 1.5rem 1.5rem;
   text-align: center;
   clear: both;
+  border-top: 1px solid var(--gold-line);
 }
 
 footer a {
@@ -1484,7 +1525,7 @@ footer p {
   }
 
   .carousel-slide::after {
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.8) 100%);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.85) 100%);
   }
 
   .carousel-controls .carousel-btn[data-action="prev"],
