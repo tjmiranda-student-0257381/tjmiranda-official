@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Image placeholder">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1626"/>
+      <stop offset="1" stop-color="#1f4f8f"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#grid)"/>
+  <g transform="translate(1150 400)" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="-110" y="-80" width="220" height="160" rx="16"/>
+    <circle cx="-45" cy="-25" r="18"/>
+    <path d="M-110 55 L-30 -10 L25 40 L60 10 L110 55"/>
+  </g>
+  <text x="1150" y="540" text-anchor="middle" fill="#ffffff" fill-opacity="0.7" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="6">IMAGE PLACEHOLDER</text>
+  <text x="1150" y="584" text-anchor="middle" fill="#ffffff" fill-opacity="0.5" font-family="Segoe UI, Arial, sans-serif" font-size="24">Web Development · 1600 × 900</text>
+</svg>
