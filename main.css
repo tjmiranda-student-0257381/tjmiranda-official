@@ -1268,6 +1268,23 @@ a.card:hover .icon-badge {
   background: linear-gradient(160deg, #3a2e0c, #0f0f10 70%);
 }
 
+.biopic--left {
+  float: left;
+  margin: 4px 24px 16px 0;
+}
+
+.bio-journey {
+  clear: both;
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.bio-journey h4 {
+  margin: 24px 0 8px;
+  color: var(--gold);
+}
+
 .clearfix::after {
   content: "";
   display: table;
