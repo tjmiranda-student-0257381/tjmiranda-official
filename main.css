@@ -1589,3 +1589,325 @@ footer p {
     transform: none;
   }
 }
+
+/* ==========================================
+   My Apps (Health Tracker) Components
+   ========================================== */
+[hidden] {
+  display: none !important;
+}
+
+.page-hero .eyebrow a {
+  color: var(--gold);
+  transition: color 0.2s ease;
+}
+
+.page-hero .eyebrow a:hover {
+  color: var(--red);
+}
+
+.card--muted {
+  border-style: dashed;
+}
+
+.card--muted h3 {
+  color: var(--muted);
+}
+
+/* --- Buttons: secondary variants --- */
+.btn--ghost {
+  background: transparent;
+  border: 1px solid var(--gold-line);
+  color: var(--gold);
+}
+
+.btn--ghost:hover {
+  background: transparent;
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.btn--small {
+  min-width: 0;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+}
+
+/* --- Tabs --- */
+.app-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.app-tab {
+  padding: 11px 18px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.app-tab:hover {
+  color: var(--gold-light);
+  border-color: var(--gold-line);
+}
+
+.app-tab[aria-selected="true"] {
+  color: #111;
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+/* --- Status message --- */
+.app-status {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.app-status.is-error {
+  border-left-color: var(--red);
+  color: #ffb3b3;
+}
+
+.app-note {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* --- Metrics --- */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 16px;
+  background: var(--bg-alt);
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--gold);
+  border-radius: var(--radius-sm);
+}
+
+.metric-label {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.metric-value {
+  color: var(--ink);
+  font-size: 1.8rem;
+  line-height: 1.1;
+}
+
+.metric-unit {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* --- Badges --- */
+.badge {
+  display: inline-block;
+  margin: 2px 6px 2px 0;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge--good {
+  color: #6ee7a8;
+  background: rgba(45, 168, 100, 0.14);
+  border-color: rgba(110, 231, 168, 0.35);
+}
+
+.badge--warn {
+  color: var(--gold-light);
+  background: var(--gold-soft);
+  border-color: var(--gold-line);
+}
+
+.badge--bad {
+  color: #ff8a8a;
+  background: rgba(255, 0, 0, 0.12);
+  border-color: rgba(255, 0, 0, 0.35);
+}
+
+.badge--food {
+  color: var(--gold-light);
+  background: var(--gold-soft);
+  border-color: var(--gold-line);
+}
+
+.badge--drink {
+  color: #9fd8ef;
+  background: rgba(159, 216, 239, 0.1);
+  border-color: rgba(159, 216, 239, 0.3);
+}
+
+.badge--medication {
+  color: #ffb3b3;
+  background: rgba(255, 0, 0, 0.1);
+  border-color: rgba(255, 0, 0, 0.28);
+}
+
+/* --- Lists --- */
+.data-list {
+  display: grid;
+  grid-template-columns: minmax(120px, 34%) 1fr;
+  gap: 10px 16px;
+  margin: 0 0 20px;
+}
+
+.data-list dt {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.data-list dd {
+  margin: 0;
+  color: var(--ink);
+}
+
+.plain-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plain-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.plain-list li:last-child {
+  border-bottom: none;
+}
+
+.entry-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.entry:last-child {
+  border-bottom: none;
+}
+
+.entry-meta {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.entry-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* --- App forms --- */
+.form-grid--tight {
+  gap: 0 24px;
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.input-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.input-row select {
+  width: auto;
+  flex-shrink: 0;
+}
+
+.input-suffix {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.bmi-preview {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.bmi-preview--good {
+  color: #6ee7a8;
+}
+
+.bmi-preview--warn {
+  color: var(--gold-light);
+}
+
+.bmi-preview--bad {
+  color: #ff8a8a;
+}
+
+.choice-group {
+  margin: 0 0 18px;
+  padding: 0;
+  border: none;
+}
+
+.table-scroll td .badge:last-child {
+  margin-right: 0;
+}
+
+@media (max-width: 600px) {
+  .data-list {
+    grid-template-columns: 1fr;
+    gap: 2px 0;
+  }
+
+  .data-list dd {
+    margin-bottom: 10px;
+  }
+
+  .app-tab {
+    flex: 1 1 auto;
+  }
+}

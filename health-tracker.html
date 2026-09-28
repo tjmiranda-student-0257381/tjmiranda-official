@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111112" />
+    <title>Health Tracker | TJ Miranda</title>
+    <meta
+      name="description"
+      content="A free personal health tracker that runs in your browser: record weight, BMI, blood sugar, blood pressure, heart rate, food, drinks, and medications. Saved on your own device, with backup files you control."
+    />
+    <link rel="stylesheet" href="main.css" />
+    <script src="main.js" defer></script>
+    <script src="health-tracker.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="navbar">
+        <a href="index.html" class="logo">
+          <span class="logo-prefix">it's me</span>
+          <span class="logo-name">TJ</span>
+        </a>
+        <button type="button" class="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
+      </div>
+      <div class="menu-backdrop"></div>
+      <nav id="site-menu" class="menu-panel" aria-label="Main" aria-hidden="true">
+        <p class="menu-label">Menu</p>
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="about.html" class="nav-link">About</a></li>
+          <li><a href="services.html" class="nav-link">Services</a></li>
+          <li><a href="resume.html" class="nav-link">My Resume</a></li>
+          <li><a href="apps.html" class="nav-link" aria-current="page">My Apps</a></li>
+        </ul>
+        <p class="menu-label">Help &amp; Legal</p>
+        <ul class="nav-menu nav-menu--secondary">
+          <li><a href="terms.html" class="nav-link">Terms</a></li>
+          <li><a href="privacy.html" class="nav-link">Privacy</a></li>
+          <li><a href="faqs.html" class="nav-link">Faqs</a></li>
+        </ul>
+        <a href="services.html#inquire-now" class="btn">Inquire Now</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="page-hero">
+        <div class="wrap">
+          <span class="eyebrow"><a href="apps.html">My Apps</a></span>
+          <h1>Health Tracker</h1>
+          <p>
+            Keep a simple record of your weight, BMI, blood sugar, blood
+            pressure, heart rate, and what you eat, drink, and take. Everything
+            is saved on your own device — no account, no database, nothing sent
+            to me or anyone else.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap wrap--narrow">
+          <div class="callout callout--warn" role="note">
+            <p>
+              <strong>For personal record keeping only.</strong> This app does not
+              diagnose, treat, or monitor any condition, and the categories it
+              shows are general reference ranges — not a medical opinion. Never
+              use it as the basis for a life-and-death decision or to decide
+              anything about your treatment or medication. Always consult your
+              doctor, and in an emergency call your local emergency number.
+            </p>
+          </div>
+
+          <p id="app-status" class="app-status" role="status" hidden></p>
+
+          <div id="storage-warning" class="callout callout--warn" hidden>
+            <p><strong>This browser is blocking local storage.</strong> The app can still be used, but nothing will be saved. Turn off private browsing or allow site data for this page, then reload.</p>
+          </div>
+
+          <noscript>
+            <div class="callout callout--warn">
+              <p><strong>JavaScript is turned off.</strong> This app runs entirely in your browser, so it needs JavaScript to work.</p>
+            </div>
+          </noscript>
+
+          <!-- ===== First-use setup ===== -->
+          <section id="setup-panel" class="content-card" hidden>
+            <h2>Set Up on This Device</h2>
+            <p>
+              Fill this in once. It is stored in this browser on this device
+              only, and you can download a backup at any time.
+            </p>
+
+            <form id="setup-form" novalidate>
+              <h3>About you</h3>
+              <div class="form-grid form-grid--tight">
+                <div class="form-group">
+                  <label for="full-name">Full Name *</label>
+                  <input type="text" id="full-name" name="full-name" autocomplete="name" required />
+                </div>
+                <div class="form-group">
+                  <label for="dob">Date of Birth *</label>
+                  <input type="date" id="dob" name="dob" autocomplete="bday" required />
+                </div>
+              </div>
+
+              <div class="form-grid form-grid--tight">
+                <div class="form-group">
+                  <label for="height-ft">Height *</label>
+                  <div class="input-row">
+                    <input type="number" id="height-ft" name="height-ft" min="1" max="8" step="1" placeholder="5" aria-label="Height in feet" required />
+                    <span class="input-suffix">ft</span>
+                    <input type="number" id="height-in" name="height-in" min="0" max="11" step="1" placeholder="7" aria-label="Height in inches" required />
+                    <span class="input-suffix">in</span>
+                  </div>
+                  <small class="form-hint">For example, 5 ft 7 in.</small>
+                </div>
+                <div class="form-group">
+                  <label for="weight">Current Weight *</label>
+                  <div class="input-row">
+                    <input type="number" id="weight" name="weight" min="1" max="1500" step="0.1" placeholder="160" required />
+                    <select id="weight-unit" name="weight-unit" aria-label="Weight unit">
+                      <option value="lb" selected>lb</option>
+                      <option value="kg">kg</option>
+                    </select>
+                  </div>
+                  <p id="setup-bmi" class="bmi-preview">Fill in your height and weight to see your BMI.</p>
+                </div>
+              </div>
+
+              <h3>Current readings</h3>
+              <div class="form-grid form-grid--tight">
+                <div class="form-group">
+                  <label for="sugar">Blood Sugar (mg/dL)</label>
+                  <input type="number" id="sugar" name="sugar" min="10" max="1000" step="1" placeholder="95" />
+                </div>
+                <div class="form-group">
+                  <label for="sugar-context">Reading Taken</label>
+                  <select id="sugar-context" name="sugar-context">
+                    <option value="fasting" selected>Fasting (before eating)</option>
+                    <option value="after">2 hours after eating</option>
+                    <option value="random">Random / any time</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-grid form-grid--tight">
+                <div class="form-group">
+                  <label for="systolic">Blood Pressure (mmHg)</label>
+                  <div class="input-row">
+                    <input type="number" id="systolic" name="systolic" min="50" max="300" step="1" placeholder="118" aria-label="Systolic" />
+                    <span class="input-suffix">/</span>
+                    <input type="number" id="diastolic" name="diastolic" min="30" max="200" step="1" placeholder="76" aria-label="Diastolic" />
+                  </div>
+                  <small class="form-hint">Systolic over diastolic, for example 118/76.</small>
+                </div>
+                <div class="form-group">
+                  <label for="heart-rate">Heart Rate (bpm)</label>
+                  <input type="number" id="heart-rate" name="heart-rate" min="20" max="250" step="1" placeholder="72" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="setup-when">Date &amp; Time of These Readings</label>
+                <input type="datetime-local" id="setup-when" name="setup-when" />
+              </div>
+
+              <h3>Food, drinks, and medications in the last 4 hours</h3>
+              <p class="form-hint">One item per line. Leave blank if there was nothing.</p>
+              <div class="form-grid form-grid--tight">
+                <div class="form-group">
+                  <label for="food">Food</label>
+                  <textarea id="food" name="food" rows="4" placeholder="Rice and grilled fish&#10;Banana"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="drinks">Drinks</label>
+                  <textarea id="drinks" name="drinks" rows="4" placeholder="Black coffee&#10;2 glasses of water"></textarea>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="meds">Medications</label>
+                <textarea id="meds" name="meds" rows="3" placeholder="Metformin 500 mg&#10;Vitamin D"></textarea>
+              </div>
+
+              <label class="form-check">
+                <input type="checkbox" id="setup-ack" name="setup-ack" required />
+                <span>I understand this app is for personal record keeping only, is not medical advice, and does not replace my doctor. *</span>
+              </label>
+
+              <div class="button-wrapper">
+                <button type="submit" class="submit-btn">Save &amp; Start Tracking</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- ===== Main app ===== -->
+          <div id="app-panel" hidden>
+            <div class="app-tabs" role="tablist" aria-label="Health Tracker sections">
+              <button type="button" class="app-tab" role="tab" id="tab-btn-dashboard" aria-controls="panel-dashboard" aria-selected="true">Dashboard</button>
+              <button type="button" class="app-tab" role="tab" id="tab-btn-record" aria-controls="panel-record" aria-selected="false" tabindex="-1">Add Record</button>
+              <button type="button" class="app-tab" role="tab" id="tab-btn-intake" aria-controls="panel-intake" aria-selected="false" tabindex="-1">Food, Drinks &amp; Meds</button>
+              <button type="button" class="app-tab" role="tab" id="tab-btn-history" aria-controls="panel-history" aria-selected="false" tabindex="-1">History</button>
+              <button type="button" class="app-tab" role="tab" id="tab-btn-backup" aria-controls="panel-backup" aria-selected="false" tabindex="-1">Backup</button>
+            </div>
+
+            <!-- Dashboard -->
+            <section id="panel-dashboard" class="app-panel" role="tabpanel" aria-labelledby="tab-btn-dashboard">
+              <div class="content-card">
+                <h2>Latest Readings</h2>
+                <p id="latest-stamp" class="app-note"></p>
+                <div id="latest-metrics" class="metric-grid"></div>
+                <p id="weight-trend" class="app-note" hidden></p>
+                <div class="inline-links">
+                  <button type="button" class="btn" data-go-tab="tab-btn-record">Add Health Record</button>
+                  <button type="button" class="btn" data-go-tab="tab-btn-intake">Add Food, Drink or Medication</button>
+                </div>
+              </div>
+
+              <div class="content-card">
+                <h2>Your Profile</h2>
+                <dl id="profile-summary" class="data-list"></dl>
+
+                <details id="profile-edit" class="faq-item">
+                  <summary>Edit profile</summary>
+                  <div class="faq-answer">
+                    <form id="profile-form" novalidate>
+                      <div class="form-grid form-grid--tight">
+                        <div class="form-group">
+                          <label for="p-full-name">Full Name</label>
+                          <input type="text" id="p-full-name" name="p-full-name" />
+                        </div>
+                        <div class="form-group">
+                          <label for="p-dob">Date of Birth</label>
+                          <input type="date" id="p-dob" name="p-dob" />
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="p-height-ft">Height</label>
+                        <div class="input-row">
+                          <input type="number" id="p-height-ft" name="p-height-ft" min="1" max="8" step="1" aria-label="Height in feet" />
+                          <span class="input-suffix">ft</span>
+                          <input type="number" id="p-height-in" name="p-height-in" min="0" max="11" step="1" aria-label="Height in inches" />
+                          <span class="input-suffix">in</span>
+                        </div>
+                      </div>
+                      <div class="button-wrapper">
+                        <button type="submit" class="submit-btn">Save Profile</button>
+                      </div>
+                    </form>
+                  </div>
+                </details>
+              </div>
+
+              <div class="content-card">
+                <h2>Recent Food, Drinks &amp; Medications</h2>
+                <ul id="recent-intake" class="plain-list"></ul>
+                <p id="recent-intake-empty" class="app-note" hidden>Nothing logged yet.</p>
+              </div>
+            </section>
+
+            <!-- Add record -->
+            <section id="panel-record" class="app-panel" role="tabpanel" aria-labelledby="tab-btn-record" hidden>
+              <div class="content-card">
+                <h2>Add a Health Record</h2>
+                <p>Fill in whatever you measured. Anything you leave blank is simply not recorded for this entry.</p>
+                <form id="record-form" novalidate>
+                  <div class="form-grid form-grid--tight">
+                    <div class="form-group">
+                      <label for="r-when">Date &amp; Time</label>
+                      <input type="datetime-local" id="r-when" name="r-when" />
+                    </div>
+                    <div class="form-group">
+                      <label for="r-weight">Weight</label>
+                      <div class="input-row">
+                        <input type="number" id="r-weight" name="r-weight" min="1" max="1500" step="0.1" placeholder="160" />
+                        <select id="r-weight-unit" name="r-weight-unit" aria-label="Weight unit">
+                          <option value="lb" selected>lb</option>
+                          <option value="kg">kg</option>
+                        </select>
+                      </div>
+                      <p id="record-bmi" class="bmi-preview">Enter a weight to see your BMI.</p>
+                    </div>
+                  </div>
+
+                  <div class="form-grid form-grid--tight">
+                    <div class="form-group">
+                      <label for="r-sugar">Blood Sugar (mg/dL)</label>
+                      <input type="number" id="r-sugar" name="r-sugar" min="10" max="1000" step="1" placeholder="95" />
+                    </div>
+                    <div class="form-group">
+                      <label for="r-sugar-context">Reading Taken</label>
+                      <select id="r-sugar-context" name="r-sugar-context">
+                        <option value="fasting" selected>Fasting (before eating)</option>
+                        <option value="after">2 hours after eating</option>
+                        <option value="random">Random / any time</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-grid form-grid--tight">
+                    <div class="form-group">
+                      <label for="r-systolic">Blood Pressure (mmHg)</label>
+                      <div class="input-row">
+                        <input type="number" id="r-systolic" name="r-systolic" min="50" max="300" step="1" placeholder="118" aria-label="Systolic" />
+                        <span class="input-suffix">/</span>
+                        <input type="number" id="r-diastolic" name="r-diastolic" min="30" max="200" step="1" placeholder="76" aria-label="Diastolic" />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="r-heart-rate">Heart Rate (bpm)</label>
+                      <input type="number" id="r-heart-rate" name="r-heart-rate" min="20" max="250" step="1" placeholder="72" />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="r-notes">Notes</label>
+                    <input type="text" id="r-notes" name="r-notes" maxlength="200" placeholder="How you felt, where it was taken, anything worth remembering" />
+                  </div>
+
+                  <div class="button-wrapper">
+                    <button type="submit" class="submit-btn">Save Record</button>
+                  </div>
+                </form>
+              </div>
+            </section>
+
+            <!-- Intake -->
+            <section id="panel-intake" class="app-panel" role="tabpanel" aria-labelledby="tab-btn-intake" hidden>
+              <div class="content-card">
+                <h2>Add Food, Drink, or Medication</h2>
+                <p>Add these any time — there is no 4-hour limit after setup.</p>
+                <form id="intake-form" novalidate>
+                  <div class="form-grid form-grid--tight">
+                    <div class="form-group">
+                      <label for="i-type">Type *</label>
+                      <select id="i-type" name="i-type">
+                        <option value="food" selected>Food</option>
+                        <option value="drink">Drink</option>
+                        <option value="medication">Medication</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="i-item">Item *</label>
+                      <input type="text" id="i-item" name="i-item" maxlength="120" placeholder="Grilled chicken, water, Metformin..." required />
+                    </div>
+                  </div>
+                  <div class="form-grid form-grid--tight">
+                    <div class="form-group">
+                      <label for="i-amount">Amount or Dose</label>
+                      <input type="text" id="i-amount" name="i-amount" maxlength="80" placeholder="1 cup, 500 mg, 2 tablets" />
+                    </div>
+                    <div class="form-group">
+                      <label for="i-when">Date &amp; Time</label>
+                      <input type="datetime-local" id="i-when" name="i-when" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="i-notes">Notes</label>
+                    <input type="text" id="i-notes" name="i-notes" maxlength="200" placeholder="Taken with food, after workout, and so on" />
+                  </div>
+                  <div class="button-wrapper">
+                    <button type="submit" class="submit-btn">Save Entry</button>
+                  </div>
+                </form>
+              </div>
+            </section>
+
+            <!-- History -->
+            <section id="panel-history" class="app-panel" role="tabpanel" aria-labelledby="tab-btn-history" hidden>
+              <div class="content-card">
+                <h2>Health Records</h2>
+                <p id="vitals-empty" class="app-note" hidden>No health records yet.</p>
+                <div id="vitals-table-wrap" class="table-scroll" hidden>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th scope="col">Date &amp; time</th>
+                        <th scope="col">Weight</th>
+                        <th scope="col">BMI</th>
+                        <th scope="col">Sugar (mg/dL)</th>
+                        <th scope="col">BP</th>
+                        <th scope="col">HR</th>
+                        <th scope="col">Categories</th>
+                        <th scope="col"><span class="visually-hidden">Actions</span></th>
+                      </tr>
+                    </thead>
+                    <tbody id="vitals-rows"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="content-card">
+                <h2>Food, Drinks &amp; Medications</h2>
+                <div class="form-group">
+                  <label for="intake-filter">Show</label>
+                  <select id="intake-filter">
+                    <option value="all" selected>Everything</option>
+                    <option value="food">Food only</option>
+                    <option value="drink">Drinks only</option>
+                    <option value="medication">Medications only</option>
+                  </select>
+                </div>
+                <p id="intake-empty" class="app-note" hidden>Nothing logged yet.</p>
+                <ul id="intake-list" class="entry-list"></ul>
+              </div>
+            </section>
+
+            <!-- Backup -->
+            <section id="panel-backup" class="app-panel" role="tabpanel" aria-labelledby="tab-btn-backup" hidden>
+              <div class="content-card">
+                <h2>Backup &amp; Restore</h2>
+                <p>
+                  Your data lives in this browser on this device. Clearing your
+                  browsing data, switching browsers, or using a new phone will
+                  leave it behind — so download a backup now and then, and keep
+                  it somewhere safe.
+                </p>
+                <div class="inline-links">
+                  <button type="button" class="btn" id="download-backup">Download Backup</button>
+                  <button type="button" class="btn btn--ghost" id="export-vitals-csv">Export Records (CSV)</button>
+                  <button type="button" class="btn btn--ghost" id="export-intake-csv">Export Intake (CSV)</button>
+                </div>
+
+                <h3>Restore from a backup file</h3>
+                <fieldset class="choice-group">
+                  <legend class="visually-hidden">Restore mode</legend>
+                  <label class="form-check">
+                    <input type="radio" name="restore-mode" value="replace" checked />
+                    <span>Replace everything on this device with the backup</span>
+                  </label>
+                  <label class="form-check">
+                    <input type="radio" name="restore-mode" value="merge" />
+                    <span>Merge — keep what is here and add anything missing</span>
+                  </label>
+                </fieldset>
+                <div class="form-group">
+                  <label for="restore-file">Backup file (.json)</label>
+                  <input type="file" id="restore-file" accept="application/json,.json" />
+                </div>
+              </div>
+
+              <div class="content-card">
+                <h2>Erase Data</h2>
+                <p>This removes your profile, health records, and intake log from this device. It cannot be undone, so download a backup first.</p>
+                <button type="button" class="btn btn--ghost" id="erase-data">Erase All Data</button>
+              </div>
+            </section>
+          </div>
+
+          <div class="content-card">
+            <h2>How the Categories Are Worked Out</h2>
+            <ul class="check-list">
+              <li><strong>BMI</strong> — under 18.5 Underweight, 18.5 to 24.9 Normal, 25 to 29.9 Overweight, 30 and above Obese.</li>
+              <li><strong>Blood sugar, fasting</strong> — under 70 Low, 70 to 99 Normal, 100 to 125 Pre-Diabetic, 126 and above Diabetic.</li>
+              <li><strong>Blood sugar, 2 hours after eating or random</strong> — under 70 Low, under 140 Normal, 140 to 199 Pre-Diabetic, 200 and above Diabetic.</li>
+              <li><strong>Blood pressure</strong> — general adult reference ranges, from Normal through Elevated, High Stage 1, High Stage 2, and Hypertensive Crisis.</li>
+              <li><strong>Heart rate</strong> — a resting rate of 60 to 100 bpm is shown as Normal.</li>
+            </ul>
+            <p class="app-note">
+              These are general adult reference ranges and may not fit you. BMI
+              in particular does not account for muscle, build, pregnancy, age,
+              or ethnicity. Your doctor's guidance always comes first.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-faqs" style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+        <a href="terms.html">Terms</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="faqs.html">Faqs</a>
+      </div>
+      
+      <div class="footer-icons">
+        <!-- Resume Icon -->
+        <a href="resume.html" class="circle-icon resume-icon" aria-label="Resume">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="social-svg">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <line x1="10" y1="9" x2="8" y2="9"></line>
+          </svg>
+        </a>
+        
+        <!-- GitHub Icon -->
+        <a href="https://github.com/tjmiranda-student-0257381" target="_blank" rel="noopener noreferrer" class="circle-icon github-icon" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="social-svg">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+          </svg>
+        </a>
+
+        <!-- Facebook Icon -->
+        <a href="https://www.facebook.com/nomoreneym" target="_blank" rel="noopener noreferrer" class="circle-icon fb-icon" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="social-svg">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+          </svg>
+        </a>
+      </div>
+      <p>&copy; 2026 <a href="https://tjmiranda.com" target="_blank" rel="noopener noreferrer">TJ Miranda</a>. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

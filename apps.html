@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111112" />
+    <title>My Apps | TJ Miranda</title>
+    <meta
+      name="description"
+      content="Free browser-based apps by TJ Miranda. They run entirely on your device, need no account, and store nothing on a server."
+    />
+    <link rel="stylesheet" href="main.css" />
+    <script src="main.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="navbar">
+        <a href="index.html" class="logo">
+          <span class="logo-prefix">it's me</span>
+          <span class="logo-name">TJ</span>
+        </a>
+        <button type="button" class="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
+      </div>
+      <div class="menu-backdrop"></div>
+      <nav id="site-menu" class="menu-panel" aria-label="Main" aria-hidden="true">
+        <p class="menu-label">Menu</p>
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="about.html" class="nav-link">About</a></li>
+          <li><a href="services.html" class="nav-link">Services</a></li>
+          <li><a href="resume.html" class="nav-link">My Resume</a></li>
+          <li><a href="apps.html" class="nav-link" aria-current="page">My Apps</a></li>
+        </ul>
+        <p class="menu-label">Help &amp; Legal</p>
+        <ul class="nav-menu nav-menu--secondary">
+          <li><a href="terms.html" class="nav-link">Terms</a></li>
+          <li><a href="privacy.html" class="nav-link">Privacy</a></li>
+          <li><a href="faqs.html" class="nav-link">Faqs</a></li>
+        </ul>
+        <a href="services.html#inquire-now" class="btn">Inquire Now</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="page-hero">
+        <div class="wrap">
+          <span class="eyebrow">My Apps</span>
+          <h1>Apps That Run on Your Device</h1>
+          <p>
+            Small, free tools I build and use myself. Each one runs entirely in
+            your browser — no account to create, no database, and nothing sent
+            to a server. Your information stays on your device, and you can
+            download a backup of it any time.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <div class="grid grid-3">
+            <a href="health-tracker.html" class="card">
+              <span class="icon-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+              </span>
+              <h3>Health Tracker</h3>
+              <p>Record your weight and BMI, blood sugar, blood pressure, heart rate, and the food, drinks, and medications you take — then back it all up to a file.</p>
+              <span class="text-link">Open the app &rarr;</span>
+            </a>
+
+            <div class="card card--muted">
+              <span class="icon-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+              </span>
+              <h3>More on the way</h3>
+              <p>I build these as I need them. If there is a simple tool you wish existed, tell me about it and it may show up here.</p>
+              <a href="services.html#inquire-now" class="text-link">Send me an idea &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--alt">
+        <div class="wrap wrap--narrow">
+          <div class="section-head section-head--left">
+            <span class="eyebrow">Good to Know</span>
+            <h2>How these apps handle your information</h2>
+          </div>
+          <ul class="check-list">
+            <li><strong>Everything stays on your device.</strong> Your entries are saved in your own browser storage. I never receive them, and there is no server holding your data.</li>
+            <li><strong>No account, no sign-in.</strong> Nothing to register for and no password to forget.</li>
+            <li><strong>You own the backups.</strong> Download a backup file whenever you like, keep it wherever you like, and restore it on any device.</li>
+            <li><strong>Clearing your browser clears the app.</strong> Wiping browsing data, switching browsers, or moving to a new phone leaves the data behind — that is what backups are for.</li>
+            <li><strong>Shared devices need care.</strong> Anyone who uses the same browser profile on that device can open the app and see what is saved.</li>
+          </ul>
+          <div class="callout callout--warn">
+            <p><strong>Health Tracker is for personal record keeping only.</strong> It is not medical advice and must never be the basis for a life-and-death decision. Always consult your doctor.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-faqs" style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+        <a href="terms.html">Terms</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="faqs.html">Faqs</a>
+      </div>
+      
+      <div class="footer-icons">
+        <!-- Resume Icon -->
+        <a href="resume.html" class="circle-icon resume-icon" aria-label="Resume">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="social-svg">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <line x1="10" y1="9" x2="8" y2="9"></line>
+          </svg>
+        </a>
+        
+        <!-- GitHub Icon -->
+        <a href="https://github.com/tjmiranda-student-0257381" target="_blank" rel="noopener noreferrer" class="circle-icon github-icon" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="social-svg">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+          </svg>
+        </a>
+
+        <!-- Facebook Icon -->
+        <a href="https://www.facebook.com/nomoreneym" target="_blank" rel="noopener noreferrer" class="circle-icon fb-icon" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="social-svg">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+          </svg>
+        </a>
+      </div>
+      <p>&copy; 2026 <a href="https://tjmiranda.com" target="_blank" rel="noopener noreferrer">TJ Miranda</a>. All rights reserved.</p>
+    </footer>
+  </body>
+</html>
