@@ -4,7 +4,8 @@
 
    Everything is stored in the visitor's own browser (localStorage).
    There is no server and no database: nothing is uploaded anywhere.
-   Backups are plain JSON files the visitor downloads and keeps.
+   Backups are plain JSON files the visitor downloads and keeps, and
+   records can be copied into the visitor's own Google Sheet.
    ========================================== */
 (() => {
   "use strict";
@@ -17,10 +18,20 @@
   let storageBlocked = false;
 
   /* ---------- Storage ---------- */
+  function migrate(data) {
+    if (!data || typeof data !== "object" || !data.profile) return null;
+    // Version 2 dropped the food/drink/medication log; old saves still load.
+    return {
+      version: 2,
+      profile: data.profile,
+      readings: Array.isArray(data.readings) ? data.readings : [],
+    };
+  }
+
   function loadState() {
     try {
       const raw = window.localStorage.getItem(KEY);
-      return raw ? JSON.parse(raw) : null;
+      return raw ? migrate(JSON.parse(raw)) : null;
     } catch (err) {
       storageBlocked = true;
       return null;
@@ -39,7 +50,7 @@
   }
 
   function blankState() {
-    return { version: 1, profile: null, readings: [], intake: [] };
+    return { version: 2, profile: null, readings: [] };
   }
 
   /* ---------- Helpers ---------- */
@@ -59,6 +70,17 @@
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   }
 
+  /* A date input gives "YYYY-MM-DD". Passing that to new Date() reads it as UTC
+     midnight, which shows as the day before in negative time zones — so build a
+     local date instead. */
+  function parseDateOnly(value) {
+    if (!value) return null;
+    const parts = String(value).split("-").map(Number);
+    if (parts.length !== 3 || parts.some((n) => !Number.isFinite(n))) return null;
+    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
   function whenToIso(value) {
     const d = value ? new Date(value) : new Date();
     return isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
@@ -70,10 +92,21 @@
     return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
   }
 
+  function formatDateOnly(value) {
+    const d = parseDateOnly(value);
+    return d ? d.toLocaleDateString(undefined, { dateStyle: "medium" }) : "—";
+  }
+
+  /* Spreadsheet-friendly stamp: YYYY-MM-DD HH:MM in local time */
+  function sheetWhen(iso) {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
   function ageFrom(dob) {
-    if (!dob) return null;
-    const born = new Date(dob);
-    if (isNaN(born.getTime())) return null;
+    const born = parseDateOnly(dob);
+    if (!born) return null;
     const now = new Date();
     let age = now.getFullYear() - born.getFullYear();
     const m = now.getMonth() - born.getMonth();
@@ -195,7 +228,7 @@
     }, 6000);
   }
 
-  /* ---------- Reading / intake records ---------- */
+  /* ---------- Records ---------- */
   function readingFrom(fields) {
     const inches = heightInches(state.profile);
     const weight = num(fields.weight);
@@ -226,19 +259,6 @@
     );
   }
 
-  function addIntake(entry) {
-    state.intake.push(entry);
-    state.intake.sort(byNewest);
-  }
-
-  function intakeFromLines(text, type, at) {
-    return String(text || "")
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .map((item) => ({ id: newId(), at, createdAt: new Date().toISOString(), type, item, amount: "", notes: "Logged at setup (past 4 hours)" }));
-  }
-
   /* Newest first. The date field only stores minutes, so entries saved within the
      same minute are ordered by when they were actually added. */
   function byNewest(a, b) {
@@ -264,7 +284,6 @@
     $("app-panel").hidden = false;
     renderDashboard();
     renderHistory();
-    renderIntake();
   }
 
   function renderDashboard() {
@@ -275,10 +294,10 @@
 
     const rows = [
       ["Name", p.fullName],
-      ["Date of birth", p.dob ? new Date(p.dob).toLocaleDateString(undefined, { dateStyle: "medium" }) : "—"],
+      ["Date of birth", formatDateOnly(p.dob)],
       ["Age", age === null ? "—" : `${age} years`],
       ["Height", `${p.heightFt}' ${p.heightIn}"`],
-      ["Records saved", `${state.readings.length} health ${state.readings.length === 1 ? "record" : "records"}, ${state.intake.length} intake ${state.intake.length === 1 ? "entry" : "entries"}`],
+      ["Records saved", `${state.readings.length} health ${state.readings.length === 1 ? "record" : "records"}`],
     ];
     for (const [label, value] of rows) {
       const dt = document.createElement("dt");
@@ -295,6 +314,7 @@
 
     if (!latest) {
       stamp.textContent = "No health records yet. Use “Add Record” to save your first one.";
+      $("weight-trend").hidden = true;
       return;
     }
 
@@ -369,9 +389,7 @@
       if (!tags.childNodes.length) tags.textContent = "—";
       tr.appendChild(tags);
 
-      if (r.notes) {
-        tr.title = r.notes;
-      }
+      if (r.notes) tr.title = r.notes;
 
       const actions = document.createElement("td");
       const del = document.createElement("button");
@@ -383,63 +401,6 @@
       tr.appendChild(actions);
 
       body.appendChild(tr);
-    }
-  }
-
-  function renderIntake() {
-    const filter = $("intake-filter").value;
-    const list = $("intake-list");
-    list.innerHTML = "";
-    const entries = state.intake
-      .slice()
-      .sort(byNewest)
-      .filter((e) => filter === "all" || e.type === filter);
-
-    $("intake-empty").hidden = entries.length > 0;
-
-    for (const e of entries) {
-      const li = document.createElement("li");
-      li.className = "entry";
-
-      const main = document.createElement("div");
-      const title = document.createElement("strong");
-      title.textContent = e.item;
-      main.appendChild(title);
-
-      const meta = document.createElement("span");
-      meta.className = "entry-meta";
-      meta.textContent = [formatWhen(e.at), e.amount, e.notes].filter(Boolean).join(" · ");
-      main.appendChild(meta);
-      li.appendChild(main);
-
-      const right = document.createElement("div");
-      right.className = "entry-actions";
-      const tag = document.createElement("span");
-      tag.className = `badge badge--${e.type}`;
-      tag.textContent = e.type === "medication" ? "Medication" : e.type === "drink" ? "Drink" : "Food";
-      right.appendChild(tag);
-
-      const del = document.createElement("button");
-      del.type = "button";
-      del.className = "btn btn--ghost btn--small";
-      del.textContent = "Delete";
-      del.dataset.deleteIntake = e.id;
-      right.appendChild(del);
-      li.appendChild(right);
-
-      list.appendChild(li);
-    }
-
-    const recent = $("recent-intake");
-    if (recent) {
-      recent.innerHTML = "";
-      const last = state.intake.slice().sort(byNewest).slice(0, 5);
-      $("recent-intake-empty").hidden = last.length > 0;
-      for (const e of last) {
-        const li = document.createElement("li");
-        li.textContent = `${e.item} — ${formatWhen(e.at)}`;
-        recent.appendChild(li);
-      }
     }
   }
 
@@ -464,13 +425,40 @@
     target.className = `bmi-preview bmi-preview--${cat.tone}`;
   }
 
-  /* ---------- Backup / restore ---------- */
+  /* ---------- Table output: CSV, TSV (Google Sheets), backup ---------- */
+  const COLUMNS = [
+    "Date and time", "Weight", "Unit", "BMI", "BMI category", "Blood sugar (mg/dL)", "Sugar reading type",
+    "Sugar category", "Systolic", "Diastolic", "Blood pressure category", "Heart rate (bpm)", "Heart rate category", "Notes",
+  ];
+
+  function rowsForExport() {
+    return sortedReadings().map((r) => {
+      const bmiCat = bmiCategory(r.bmi);
+      const sugarCat = sugarCategory(r.sugar, r.sugarContext);
+      const bpCat = bpCategory(r.systolic, r.diastolic);
+      const hrCat = hrCategory(r.heartRate);
+      return [
+        sheetWhen(r.at), r.weight, r.weightUnit, r.bmi, bmiCat ? bmiCat.label : "",
+        r.sugar, SUGAR_CONTEXT_LABEL[r.sugarContext] || "", sugarCat ? sugarCat.label : "",
+        r.systolic, r.diastolic, bpCat ? bpCat.label : "", r.heartRate, hrCat ? hrCat.label : "", r.notes,
+      ].map((v) => (v === null || v === undefined ? "" : String(v)));
+    });
+  }
+
+  const csvCell = (value) => `"${String(value).replace(/"/g, '""')}"`;
+
+  function vitalsCsv() {
+    return [COLUMNS.map(csvCell).join(","), ...rowsForExport().map((row) => row.map(csvCell).join(","))].join("\r\n");
+  }
+
+  /* Tab separated, so it pastes straight into a spreadsheet */
+  function vitalsTsv() {
+    const clean = (v) => String(v).replace(/[\t\r\n]+/g, " ").trim();
+    return [COLUMNS.join("\t"), ...rowsForExport().map((row) => row.map(clean).join("\t"))].join("\n");
+  }
+
   function exportData() {
-    return JSON.stringify(
-      { app: APP_ID, version: 1, exportedAt: new Date().toISOString(), data: state },
-      null,
-      2
-    );
+    return JSON.stringify({ app: APP_ID, version: 2, exportedAt: new Date().toISOString(), data: state }, null, 2);
   }
 
   function importData(json, mode) {
@@ -480,27 +468,26 @@
     } catch (err) {
       return { ok: false, error: "That file is not a valid backup (it could not be read as JSON)." };
     }
-    const data = parsed && parsed.data ? parsed.data : parsed;
-    if (!data || typeof data !== "object" || !data.profile || !Array.isArray(data.readings) || !Array.isArray(data.intake)) {
+    const raw = parsed && parsed.data ? parsed.data : parsed;
+    const data = migrate(raw);
+    if (!data) {
       return { ok: false, error: "That file does not look like a Health Tracker backup." };
     }
 
     if (mode === "merge" && state && state.profile) {
       const seen = new Set(state.readings.map((r) => r.id));
-      const seenIntake = new Set(state.intake.map((e) => e.id));
       let added = 0;
-      for (const r of data.readings) if (!seen.has(r.id)) { state.readings.push(r); added += 1; }
-      for (const e of data.intake) if (!seenIntake.has(e.id)) { state.intake.push(e); added += 1; }
+      for (const r of data.readings) {
+        if (!seen.has(r.id)) {
+          state.readings.push(r);
+          added += 1;
+        }
+      }
       saveState();
       return { ok: true, added };
     }
 
-    state = {
-      version: 1,
-      profile: data.profile,
-      readings: data.readings,
-      intake: data.intake,
-    };
+    state = data;
     saveState();
     return { ok: true, replaced: true };
   }
@@ -517,34 +504,16 @@
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  const csvCell = (value) => `"${String(value === null || value === undefined ? "" : value).replace(/"/g, '""')}"`;
-
-  function vitalsCsv() {
-    const header = [
-      "Date and time", "Weight", "Unit", "BMI", "BMI category", "Blood sugar (mg/dL)", "Sugar reading type",
-      "Sugar category", "Systolic", "Diastolic", "Blood pressure category", "Heart rate (bpm)", "Heart rate category", "Notes",
-    ];
-    const lines = [header.map(csvCell).join(",")];
-    for (const r of sortedReadings()) {
-      const bmiCat = bmiCategory(r.bmi);
-      const sugarCat = sugarCategory(r.sugar, r.sugarContext);
-      const bpCat = bpCategory(r.systolic, r.diastolic);
-      const hrCat = hrCategory(r.heartRate);
-      lines.push([
-        formatWhen(r.at), r.weight, r.weightUnit, r.bmi, bmiCat ? bmiCat.label : "",
-        r.sugar, SUGAR_CONTEXT_LABEL[r.sugarContext] || "", sugarCat ? sugarCat.label : "",
-        r.systolic, r.diastolic, bpCat ? bpCat.label : "", r.heartRate, hrCat ? hrCat.label : "", r.notes,
-      ].map(csvCell).join(","));
+  async function copyToClipboard(text) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch (err) {
+      /* fall through to the manual copy box */
     }
-    return lines.join("\r\n");
-  }
-
-  function intakeCsv() {
-    const lines = [["Date and time", "Type", "Item", "Amount or dose", "Notes"].map(csvCell).join(",")];
-    for (const e of state.intake.slice().sort(byNewest)) {
-      lines.push([formatWhen(e.at), e.type, e.item, e.amount, e.notes].map(csvCell).join(","));
-    }
-    return lines.join("\r\n");
+    return false;
   }
 
   const stampedName = (base, ext) => `${base}-${new Date().toISOString().slice(0, 10)}.${ext}`;
@@ -577,6 +546,27 @@
     return show;
   }
 
+  /* ---------- Add Record: now or a past reading ---------- */
+  function whenMode() {
+    const checked = document.querySelector('input[name="when-mode"]:checked');
+    return checked ? checked.value : "now";
+  }
+
+  function applyWhenMode() {
+    const past = whenMode() === "past";
+    $("when-wrap").hidden = !past;
+    if (past && !$("r-when").value) $("r-when").value = localInputValue();
+  }
+
+  function usePastMode() {
+    const radio = document.querySelector('input[name="when-mode"][value="past"]');
+    if (radio) {
+      radio.checked = true;
+      applyWhenMode();
+      $("r-when").focus();
+    }
+  }
+
   /* ---------- Wiring ---------- */
   function init() {
     state = loadState() || blankState();
@@ -588,10 +578,7 @@
 
     const showTab = setupTabs();
     $("setup-when").value = localInputValue();
-    $("r-when").value = localInputValue();
-    $("i-when").value = localInputValue();
 
-    // Live BMI previews
     for (const id of ["weight", "weight-unit", "height-ft", "height-in"]) {
       const field = $(id);
       if (field) field.addEventListener("input", () => updateBmiPreview("setup"));
@@ -599,6 +586,9 @@
     for (const id of ["r-weight", "r-weight-unit"]) {
       const field = $(id);
       if (field) field.addEventListener("input", () => updateBmiPreview("record"));
+    }
+    for (const radio of document.querySelectorAll('input[name="when-mode"]')) {
+      radio.addEventListener("change", applyWhenMode);
     }
 
     /* Setup */
@@ -628,23 +618,20 @@
       });
       if (hasVitals(reading)) state.readings.push(reading);
 
-      for (const [field, type] of [["food", "food"], ["drinks", "drink"], ["meds", "medication"]]) {
-        state.intake.push(...intakeFromLines($(field).value, type, at));
-      }
-      state.intake.sort(byNewest);
-
       if (saveState()) {
         renderAll();
+        showTab($("tab-btn-dashboard"));
         say("Setup saved on this device.");
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
     });
 
-    /* Add health record */
+    /* Add health record — now, or a past reading */
     $("record-form").addEventListener("submit", (e) => {
       e.preventDefault();
+      const at = whenMode() === "past" ? whenToIso($("r-when").value) : new Date().toISOString();
       const reading = readingFrom({
-        at: whenToIso($("r-when").value),
+        at,
         weight: $("r-weight").value,
         weightUnit: $("r-weight-unit").value,
         sugar: $("r-sugar").value,
@@ -658,35 +645,14 @@
         say("Enter at least one measurement before saving.", true);
         return;
       }
+      const wasPast = whenMode() === "past";
       state.readings.push(reading);
       if (saveState()) {
         $("record-form").reset();
-        $("r-when").value = localInputValue();
+        applyWhenMode();
         updateBmiPreview("record");
         renderAll();
-        say("Health record saved.");
-      }
-    });
-
-    /* Add intake */
-    $("intake-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const item = $("i-item").value.trim();
-      if (!item) return;
-      addIntake({
-        id: newId(),
-        at: whenToIso($("i-when").value),
-        createdAt: new Date().toISOString(),
-        type: $("i-type").value,
-        item,
-        amount: $("i-amount").value.trim(),
-        notes: $("i-notes").value.trim(),
-      });
-      if (saveState()) {
-        $("intake-form").reset();
-        $("i-when").value = localInputValue();
-        renderAll();
-        say("Intake entry saved.");
+        say(wasPast ? "Past reading saved. Add another if you have more." : "Health record saved.");
       }
     });
 
@@ -711,7 +677,7 @@
       $("p-height-in").value = state.profile.heightIn || 0;
     });
 
-    /* Deletes */
+    /* Deletes and shortcuts */
     document.addEventListener("click", (e) => {
       const target = e.target;
       if (!(target instanceof HTMLElement)) return;
@@ -724,26 +690,17 @@
         say("Health record deleted.");
       }
 
-      if (target.dataset.deleteIntake) {
-        if (!window.confirm("Delete this intake entry? This cannot be undone.")) return;
-        state.intake = state.intake.filter((entry) => entry.id !== target.dataset.deleteIntake);
-        saveState();
-        renderAll();
-        say("Intake entry deleted.");
-      }
-
       if (target.dataset.goTab) {
         const tab = $(target.dataset.goTab);
         if (tab) {
           tab.click();
           tab.focus();
         }
+        if (target.dataset.past) usePastMode();
       }
     });
 
-    $("intake-filter").addEventListener("change", renderIntake);
-
-    /* Backup tab */
+    /* Backup, CSV, Google Sheets */
     $("download-backup").addEventListener("click", () => {
       download(stampedName("health-tracker-backup", "json"), exportData(), "application/json");
       say("Backup file downloaded. Keep it somewhere safe.");
@@ -754,9 +711,23 @@
       say("Health records exported as CSV.");
     });
 
-    $("export-intake-csv").addEventListener("click", () => {
-      download(stampedName("intake-log", "csv"), intakeCsv(), "text/csv");
-      say("Intake log exported as CSV.");
+    $("copy-sheets").addEventListener("click", async () => {
+      if (!state.readings.length) {
+        say("There are no records to copy yet.", true);
+        return;
+      }
+      const text = vitalsTsv();
+      const copied = await copyToClipboard(text);
+      if (copied) {
+        $("copy-fallback").hidden = true;
+        say(`${state.readings.length} ${state.readings.length === 1 ? "record" : "records"} copied. Open your Google Sheet, click cell A1, and paste.`);
+      } else {
+        $("copy-fallback").hidden = false;
+        $("copy-area").value = text;
+        $("copy-area").focus();
+        $("copy-area").select();
+        say("Your browser blocked the copy — select the text below and copy it yourself.", true);
+      }
     });
 
     $("restore-file").addEventListener("change", (e) => {
@@ -776,7 +747,7 @@
           return;
         }
         renderAll();
-        say(result.replaced ? "Backup restored." : `Backup merged: ${result.added} new ${result.added === 1 ? "entry" : "entries"} added.`);
+        say(result.replaced ? "Backup restored." : `Backup merged: ${result.added} new ${result.added === 1 ? "record" : "records"} added.`);
       };
       reader.onerror = () => say("That file could not be read.", true);
       reader.readAsText(file);
@@ -784,7 +755,7 @@
 
     $("erase-data").addEventListener("click", () => {
       if (!window.confirm("Erase all Health Tracker data from this device? Download a backup first if you want to keep it.")) return;
-      if (!window.confirm("Last check — this permanently deletes your profile, health records, and intake log on this device.")) return;
+      if (!window.confirm("Last check — this permanently deletes your profile and health records on this device.")) return;
       try {
         window.localStorage.removeItem(KEY);
       } catch (err) {
@@ -799,6 +770,7 @@
 
     renderAll();
     updateBmiPreview("setup");
+    applyWhenMode();
     if (state.profile) showTab($("tab-btn-dashboard"));
   }
 
@@ -810,6 +782,10 @@
     bpCategory,
     hrCategory,
     heightInches,
+    ageFrom,
+    formatDateOnly,
+    vitalsTsv,
+    vitalsCsv,
     exportData,
     importData,
     getState: () => state,

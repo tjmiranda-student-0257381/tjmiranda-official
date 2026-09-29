@@ -7,7 +7,7 @@
     <title>Health Tracker | TJ Miranda</title>
     <meta
       name="description"
-      content="A free personal health tracker that runs in your browser: record weight, BMI, blood sugar, blood pressure, heart rate, food, drinks, and medications. Saved on your own device, with backup files you control."
+      content="A free personal health tracker that runs in your browser: record weight, BMI, blood sugar, blood pressure, and heart rate, including past readings. Saved on your own device, with backups and Google Sheets export you control."
     />
     <link rel="stylesheet" href="main.css" />
     <script src="main.js" defer></script>
@@ -55,9 +55,9 @@
           <h1>Health Tracker</h1>
           <p>
             Keep a simple record of your weight, BMI, blood sugar, blood
-            pressure, heart rate, and what you eat, drink, and take. Everything
-            is saved on your own device — no account, no database, nothing sent
-            to me or anyone else.
+            pressure, and heart rate — including readings you already took in
+            the past. Everything is saved on your own device: no account, no
+            database, nothing sent to me or anyone else.
           </p>
         </div>
       </section>
@@ -92,7 +92,8 @@
             <h2>Set Up on This Device</h2>
             <p>
               Fill this in once. It is stored in this browser on this device
-              only, and you can download a backup at any time.
+              only, and you can download a backup at any time. Once you are set
+              up, you can also add readings you took in the past.
             </p>
 
             <form id="setup-form" novalidate>
@@ -169,23 +170,6 @@
                 <input type="datetime-local" id="setup-when" name="setup-when" />
               </div>
 
-              <h3>Food, drinks, and medications in the last 4 hours</h3>
-              <p class="form-hint">One item per line. Leave blank if there was nothing.</p>
-              <div class="form-grid form-grid--tight">
-                <div class="form-group">
-                  <label for="food">Food</label>
-                  <textarea id="food" name="food" rows="4" placeholder="Rice and grilled fish&#10;Banana"></textarea>
-                </div>
-                <div class="form-group">
-                  <label for="drinks">Drinks</label>
-                  <textarea id="drinks" name="drinks" rows="4" placeholder="Black coffee&#10;2 glasses of water"></textarea>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="meds">Medications</label>
-                <textarea id="meds" name="meds" rows="3" placeholder="Metformin 500 mg&#10;Vitamin D"></textarea>
-              </div>
-
               <label class="form-check">
                 <input type="checkbox" id="setup-ack" name="setup-ack" required />
                 <span>I understand this app is for personal record keeping only, is not medical advice, and does not replace my doctor. *</span>
@@ -202,9 +186,8 @@
             <div class="app-tabs" role="tablist" aria-label="Health Tracker sections">
               <button type="button" class="app-tab" role="tab" id="tab-btn-dashboard" aria-controls="panel-dashboard" aria-selected="true">Dashboard</button>
               <button type="button" class="app-tab" role="tab" id="tab-btn-record" aria-controls="panel-record" aria-selected="false" tabindex="-1">Add Record</button>
-              <button type="button" class="app-tab" role="tab" id="tab-btn-intake" aria-controls="panel-intake" aria-selected="false" tabindex="-1">Food, Drinks &amp; Meds</button>
               <button type="button" class="app-tab" role="tab" id="tab-btn-history" aria-controls="panel-history" aria-selected="false" tabindex="-1">History</button>
-              <button type="button" class="app-tab" role="tab" id="tab-btn-backup" aria-controls="panel-backup" aria-selected="false" tabindex="-1">Backup</button>
+              <button type="button" class="app-tab" role="tab" id="tab-btn-backup" aria-controls="panel-backup" aria-selected="false" tabindex="-1">Backup &amp; Sheets</button>
             </div>
 
             <!-- Dashboard -->
@@ -216,7 +199,7 @@
                 <p id="weight-trend" class="app-note" hidden></p>
                 <div class="inline-links">
                   <button type="button" class="btn" data-go-tab="tab-btn-record">Add Health Record</button>
-                  <button type="button" class="btn" data-go-tab="tab-btn-intake">Add Food, Drink or Medication</button>
+                  <button type="button" class="btn btn--ghost" data-go-tab="tab-btn-record" data-past="1">Add a Past Reading</button>
                 </div>
               </div>
 
@@ -254,12 +237,6 @@
                   </div>
                 </details>
               </div>
-
-              <div class="content-card">
-                <h2>Recent Food, Drinks &amp; Medications</h2>
-                <ul id="recent-intake" class="plain-list"></ul>
-                <p id="recent-intake-empty" class="app-note" hidden>Nothing logged yet.</p>
-              </div>
             </section>
 
             <!-- Add record -->
@@ -267,12 +244,27 @@
               <div class="content-card">
                 <h2>Add a Health Record</h2>
                 <p>Fill in whatever you measured. Anything you leave blank is simply not recorded for this entry.</p>
+
                 <form id="record-form" novalidate>
+                  <fieldset class="choice-group">
+                    <legend class="choice-legend">When was this reading taken?</legend>
+                    <label class="form-check">
+                      <input type="radio" name="when-mode" value="now" checked />
+                      <span>Right now</span>
+                    </label>
+                    <label class="form-check">
+                      <input type="radio" name="when-mode" value="past" />
+                      <span>Earlier — a previous reading I already have</span>
+                    </label>
+                  </fieldset>
+
+                  <div class="form-group" id="when-wrap" hidden>
+                    <label for="r-when">Date &amp; Time It Was Taken</label>
+                    <input type="datetime-local" id="r-when" name="r-when" />
+                    <small class="form-hint">Use this for readings from your logbook, a clinic visit, or another app. Past readings are filed in order and do not replace your latest one.</small>
+                  </div>
+
                   <div class="form-grid form-grid--tight">
-                    <div class="form-group">
-                      <label for="r-when">Date &amp; Time</label>
-                      <input type="datetime-local" id="r-when" name="r-when" />
-                    </div>
                     <div class="form-group">
                       <label for="r-weight">Weight</label>
                       <div class="input-row">
@@ -283,6 +275,10 @@
                         </select>
                       </div>
                       <p id="record-bmi" class="bmi-preview">Enter a weight to see your BMI.</p>
+                    </div>
+                    <div class="form-group">
+                      <label for="r-heart-rate">Heart Rate (bpm)</label>
+                      <input type="number" id="r-heart-rate" name="r-heart-rate" min="20" max="250" step="1" placeholder="72" />
                     </div>
                   </div>
 
@@ -301,18 +297,12 @@
                     </div>
                   </div>
 
-                  <div class="form-grid form-grid--tight">
-                    <div class="form-group">
-                      <label for="r-systolic">Blood Pressure (mmHg)</label>
-                      <div class="input-row">
-                        <input type="number" id="r-systolic" name="r-systolic" min="50" max="300" step="1" placeholder="118" aria-label="Systolic" />
-                        <span class="input-suffix">/</span>
-                        <input type="number" id="r-diastolic" name="r-diastolic" min="30" max="200" step="1" placeholder="76" aria-label="Diastolic" />
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="r-heart-rate">Heart Rate (bpm)</label>
-                      <input type="number" id="r-heart-rate" name="r-heart-rate" min="20" max="250" step="1" placeholder="72" />
+                  <div class="form-group">
+                    <label for="r-systolic">Blood Pressure (mmHg)</label>
+                    <div class="input-row">
+                      <input type="number" id="r-systolic" name="r-systolic" min="50" max="300" step="1" placeholder="118" aria-label="Systolic" />
+                      <span class="input-suffix">/</span>
+                      <input type="number" id="r-diastolic" name="r-diastolic" min="30" max="200" step="1" placeholder="76" aria-label="Diastolic" />
                     </div>
                   </div>
 
@@ -323,47 +313,6 @@
 
                   <div class="button-wrapper">
                     <button type="submit" class="submit-btn">Save Record</button>
-                  </div>
-                </form>
-              </div>
-            </section>
-
-            <!-- Intake -->
-            <section id="panel-intake" class="app-panel" role="tabpanel" aria-labelledby="tab-btn-intake" hidden>
-              <div class="content-card">
-                <h2>Add Food, Drink, or Medication</h2>
-                <p>Add these any time — there is no 4-hour limit after setup.</p>
-                <form id="intake-form" novalidate>
-                  <div class="form-grid form-grid--tight">
-                    <div class="form-group">
-                      <label for="i-type">Type *</label>
-                      <select id="i-type" name="i-type">
-                        <option value="food" selected>Food</option>
-                        <option value="drink">Drink</option>
-                        <option value="medication">Medication</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label for="i-item">Item *</label>
-                      <input type="text" id="i-item" name="i-item" maxlength="120" placeholder="Grilled chicken, water, Metformin..." required />
-                    </div>
-                  </div>
-                  <div class="form-grid form-grid--tight">
-                    <div class="form-group">
-                      <label for="i-amount">Amount or Dose</label>
-                      <input type="text" id="i-amount" name="i-amount" maxlength="80" placeholder="1 cup, 500 mg, 2 tablets" />
-                    </div>
-                    <div class="form-group">
-                      <label for="i-when">Date &amp; Time</label>
-                      <input type="datetime-local" id="i-when" name="i-when" />
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="i-notes">Notes</label>
-                    <input type="text" id="i-notes" name="i-notes" maxlength="200" placeholder="Taken with food, after workout, and so on" />
-                  </div>
-                  <div class="button-wrapper">
-                    <button type="submit" class="submit-btn">Save Entry</button>
                   </div>
                 </form>
               </div>
@@ -392,25 +341,33 @@
                   </table>
                 </div>
               </div>
-
-              <div class="content-card">
-                <h2>Food, Drinks &amp; Medications</h2>
-                <div class="form-group">
-                  <label for="intake-filter">Show</label>
-                  <select id="intake-filter">
-                    <option value="all" selected>Everything</option>
-                    <option value="food">Food only</option>
-                    <option value="drink">Drinks only</option>
-                    <option value="medication">Medications only</option>
-                  </select>
-                </div>
-                <p id="intake-empty" class="app-note" hidden>Nothing logged yet.</p>
-                <ul id="intake-list" class="entry-list"></ul>
-              </div>
             </section>
 
-            <!-- Backup -->
+            <!-- Backup & Sheets -->
             <section id="panel-backup" class="app-panel" role="tabpanel" aria-labelledby="tab-btn-backup" hidden>
+              <div class="content-card">
+                <h2>Send to Your Google Sheet</h2>
+                <p>
+                  Copy your records and paste them into a Google Sheet that
+                  belongs to you. Nothing is sent automatically — you paste it
+                  yourself, into a sheet only you control.
+                </p>
+                <ol class="numbered-steps">
+                  <li>Click <strong>Copy Records for Google Sheets</strong>.</li>
+                  <li>Click <strong>Open a New Google Sheet</strong> — it opens in a new tab, and you may need to sign in to your Google account.</li>
+                  <li>Click cell <strong>A1</strong> and paste with <kbd>Ctrl</kbd> + <kbd>V</kbd> (<kbd>⌘</kbd> + <kbd>V</kbd> on a Mac).</li>
+                </ol>
+                <div class="inline-links">
+                  <button type="button" class="btn" id="copy-sheets">Copy Records for Google Sheets</button>
+                  <a class="btn btn--ghost" href="https://sheets.new" target="_blank" rel="noopener noreferrer">Open a New Google Sheet</a>
+                </div>
+                <div id="copy-fallback" hidden>
+                  <p class="app-note">Your browser blocked the copy. Select everything below and copy it yourself.</p>
+                  <textarea id="copy-area" class="copy-area" rows="6" readonly aria-label="Records to copy"></textarea>
+                </div>
+                <p class="app-note">Prefer a file? The CSV below can be brought in with <strong>File &rarr; Import</strong> in Google Sheets, or opened in Excel.</p>
+              </div>
+
               <div class="content-card">
                 <h2>Backup &amp; Restore</h2>
                 <p>
@@ -422,7 +379,6 @@
                 <div class="inline-links">
                   <button type="button" class="btn" id="download-backup">Download Backup</button>
                   <button type="button" class="btn btn--ghost" id="export-vitals-csv">Export Records (CSV)</button>
-                  <button type="button" class="btn btn--ghost" id="export-intake-csv">Export Intake (CSV)</button>
                 </div>
 
                 <h3>Restore from a backup file</h3>
@@ -445,7 +401,7 @@
 
               <div class="content-card">
                 <h2>Erase Data</h2>
-                <p>This removes your profile, health records, and intake log from this device. It cannot be undone, so download a backup first.</p>
+                <p>This removes your profile and health records from this device. It cannot be undone, so download a backup first.</p>
                 <button type="button" class="btn btn--ghost" id="erase-data">Erase All Data</button>
               </div>
             </section>

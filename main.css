@@ -1911,3 +1911,46 @@ footer p {
     flex: 1 1 auto;
   }
 }
+
+/* --- My Apps: steps, keys, copy box --- */
+.numbered-steps {
+  margin: 0 0 20px;
+  padding-left: 1.3rem;
+}
+
+.numbered-steps li {
+  margin-bottom: 8px;
+}
+
+kbd {
+  display: inline-block;
+  padding: 2px 7px;
+  color: var(--ink);
+  background: var(--field);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85em;
+}
+
+.copy-area {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 14px;
+  color: var(--ink);
+  background: var(--field);
+  border: 1px solid #36363a;
+  border-radius: var(--radius-sm);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  resize: vertical;
+}
+
+.choice-legend {
+  margin-bottom: 8px;
+  padding: 0;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
