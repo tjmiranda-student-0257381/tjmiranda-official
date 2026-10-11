@@ -240,6 +240,6 @@
     <path d="M24 40 L22 30 L28 34 L32 26 L36 34 L42 30 L40 40 Z" fill="#111827" />
     <text x="58" y="28" fill="#fef08a" font-size="11" font-weight="800" class="txt-sans">FOUNDING SELLERS</text>
     <text x="58" y="47" fill="#ffffff" font-size="14" font-weight="800" class="txt-sans">0% Commission</text>
-    <text x="24" y="72" fill="#94a3b8" font-size="11" font-weight="600" class="txt-sans">1 item/day &bull; 30 listings/mo</text>
+    <text x="24" y="72" fill="#94a3b8" font-size="11" font-weight="600" class="txt-sans">1 item/day &#8226; 30 listings/mo</text>
   </g>
 </svg>
