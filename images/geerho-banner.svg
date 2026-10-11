@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bannerBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1d" />
+      <stop offset="45%" stop-color="#0d1424" />
+      <stop offset="100%" stop-color="#05070c" />
+    </linearGradient>
+
+    <!-- Gold Accent Gradient -->
+    <linearGradient id="bgGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#d4af37" />
+      <stop offset="100%" stop-color="#854d0e" />
+    </linearGradient>
+
+    <!-- Royal Blue Accent Gradient -->
+    <linearGradient id="bgBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="50%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+
+    <radialGradient id="goldGlowRadial" cx="80%" cy="30%" r="50%">
+      <stop offset="0%" stop-color="#d4af37" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#d4af37" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="blueGlowRadial" cx="20%" cy="70%" r="60%">
+      <stop offset="0%" stop-color="#007bff" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#007bff" stop-opacity="0" />
+    </radialGradient>
+
+    <filter id="blurFilter" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="60" />
+    </filter>
+
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <style>
+    .font-sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  </style>
+
+  <!-- Deep Background -->
+  <rect width="1600" height="900" fill="url(#bannerBg)" />
+
+  <!-- Ambient Light Orbs -->
+  <rect width="1600" height="900" fill="url(#goldGlowRadial)" />
+  <rect width="1600" height="900" fill="url(#blueGlowRadial)" />
+
+  <!-- Subtle Perspective Grid / Cyber Lines -->
+  <g stroke="#1e293b" stroke-width="1" opacity="0.35">
+    <line x1="0" y1="150" x2="1600" y2="150" />
+    <line x1="0" y1="300" x2="1600" y2="300" />
+    <line x1="0" y1="450" x2="1600" y2="450" />
+    <line x1="0" y1="600" x2="1600" y2="600" />
+    <line x1="0" y1="750" x2="1600" y2="750" />
+
+    <line x1="200" y1="0" x2="200" y2="900" />
+    <line x1="500" y1="0" x2="500" y2="900" />
+    <line x1="800" y1="0" x2="800" y2="900" />
+    <line x1="1100" y1="0" x2="1100" y2="900" />
+    <line x1="1400" y1="0" x2="1400" y2="900" />
+  </g>
+
+  <!-- Isometric / Glowing Geometric Accents in the right hemisphere -->
+  <g transform="translate(1050, 420)">
+    <!-- Concentric Target Circles -->
+    <circle cx="0" cy="0" r="340" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="8 8" opacity="0.4" />
+    <circle cx="0" cy="0" r="260" fill="none" stroke="url(#bgGold)" stroke-width="2" opacity="0.5" />
+    <circle cx="0" cy="0" r="180" fill="none" stroke="url(#bgBlue)" stroke-width="2.5" opacity="0.7" filter="url(#subtleGlow)" />
+    <circle cx="0" cy="0" r="80" fill="#0f172a" stroke="url(#bgGold)" stroke-width="3" filter="url(#subtleGlow)" />
+
+    <!-- Center Geerho Bag Emblem -->
+    <path d="M-30 -10 C-30 -22, -22 -28, -10 -28 L10 -28 C22 -28, 30 -22, 30 -10 L36 34 C36 40, 32 46, 24 46 L-24 46 C-32 46, -36 40, -36 34 Z" 
+          fill="none" stroke="url(#bgGold)" stroke-width="4" />
+    <path d="M-14 -28 V-38 C-14 -46, -6 -52, 0 -52 C6 -52, 14 -46, 14 -38 V-28" 
+          fill="none" stroke="url(#bgGold)" stroke-width="4" stroke-linecap="round" />
+    <!-- Monogram G inside -->
+    <path d="M8 -2 C6 -6, 2 -8, -2 -8 C-10 -8, -16 -2, -16 6 C-16 14, -10 20, -2 20 C6 20, 11 15, 12 9 H-2 V3 H18 C19 12, 13 26, -2 26 C-14 26, -22 17, -22 6 C-22 -5, -14 -14, -2 -14 C6 -14, 12 -10, 15 -6 Z" 
+          fill="url(#bgGold)" />
+
+    <!-- Orbiting Badges around emblem -->
+    <!-- Badge 1: 0% Commission (Top Right) -->
+    <g transform="translate(180, -140)">
+      <rect x="-80" y="-30" width="160" height="60" rx="30" fill="#0b1120" stroke="url(#bgGold)" stroke-width="2" filter="url(#subtleGlow)" />
+      <text x="0" y="-4" fill="#fef08a" font-size="11" font-weight="800" text-anchor="middle" class="font-sans" letter-spacing="1">ZERO COMMISSION</text>
+      <text x="0" y="16" fill="#ffffff" font-size="18" font-weight="900" text-anchor="middle" class="font-sans">0% FEES</text>
+    </g>
+
+    <!-- Badge 2: 30 Listings / Month (Bottom Right) -->
+    <g transform="translate(190, 150)">
+      <rect x="-95" y="-30" width="190" height="60" rx="30" fill="#0b1120" stroke="#38bdf8" stroke-width="2" filter="url(#subtleGlow)" />
+      <text x="0" y="-4" fill="#7dd3fc" font-size="11" font-weight="800" text-anchor="middle" class="font-sans" letter-spacing="1">DAILY ALLOWANCE</text>
+      <text x="0" y="16" fill="#ffffff" font-size="16" font-weight="800" text-anchor="middle" class="font-sans">1/Day &bull; 30/Month</text>
+    </g>
+
+    <!-- Badge 3: First 300 Sellers (Left) -->
+    <g transform="translate(-210, -50)">
+      <rect x="-90" y="-32" width="180" height="64" rx="32" fill="#0b1120" stroke="url(#bgGold)" stroke-width="2" filter="url(#subtleGlow)" />
+      <text x="0" y="-6" fill="#fef08a" font-size="11" font-weight="800" text-anchor="middle" class="font-sans" letter-spacing="1">FOUNDING TIER</text>
+      <text x="0" y="16" fill="#ffffff" font-size="16" font-weight="900" text-anchor="middle" class="font-sans">First 300 Sellers</text>
+    </g>
+
+    <!-- Badge 4: TestFlight Ready (Bottom Left) -->
+    <g transform="translate(-160, 170)">
+      <rect x="-85" y="-26" width="170" height="52" rx="26" fill="#0b1120" stroke="#007bff" stroke-width="2" />
+      <text x="0" y="7" fill="#60a5fa" font-size="13" font-weight="800" text-anchor="middle" class="font-sans">Apple TestFlight</text>
+    </g>
+  </g>
+
+  <!-- Left Side Vignette Lighting (gives room for white text in carousel-content) -->
+  <rect x="0" y="0" width="750" height="900" fill="url(#bannerBg)" opacity="0.6" />
+</svg>
